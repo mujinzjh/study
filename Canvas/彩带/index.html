@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>彩带</title>
+  </head>
+  <body>
+    <canvas></canvas>
+    <script>
+      const canvas = document.querySelector("canvas");
+
+      const ctx = canvas.getContext("2d");
+
+      const dpr = window.devicePixelRatio;
+
+      const init = () => {
+        canvas.width = dpr * window.innerWidth;
+        canvas.height = dpr * window.innerHeight;
+      };
+      init();
+
+      ctx.scale(dpr, dpr);
+      ctx.globalAlpha = 0.6; // 设置canvas 全局的透明度0.6
+
+      let q,
+        f = 90;
+      const draw = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        q = [
+          { x: 0, y: canvas.height * 0.7 + f },
+          { x: 0, y: canvas.height * 0.7 - f },
+        ];
+        while (q[1].x < canvas.width + 90) {
+          drawLine(q[0], q[1]);
+        }
+      };
+      let r = 0,
+        rad = Math.PI * 2;
+      const drawLine = (i, j) => {
+        ctx.beginPath();
+        ctx.moveTo(j.x, i.y);
+        ctx.lineTo(j.x, j.y);
+
+        let k = j.x + (Math.random() * 2 - 0.25) * f,
+          n = getRandom(j.y);
+        ctx.lineTo(k, n);
+        r -= rad / -50;
+        console.log(r);
+        const color =
+          "#" +
+          (
+            ((Math.cos(r) * 127 + 128) << 16) |
+            ((Math.cos(r + rad / 3) * 127 + 128) << 8) |
+            (Math.cos(r + (rad / 3) * 2) * 127 + 128)
+          ).toString(16);
+        console.log(color);
+        ctx.fillStyle = color;
+
+        ctx.fill();
+
+        q[0] = q[1];
+        q[1] = { x: k, y: n };
+      };
+
+      const getRandom = (num) => {
+        const { height } = canvas;
+        const random = num + (Math.random() * 2 - 1.1) * f;
+        return random > height || random < 0 ? getRandom(num) : random;
+      };
+
+      draw();
+      setInterval(draw, 1500);
+    </script>
+  </body>
+</html>

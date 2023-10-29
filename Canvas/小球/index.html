@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <canvas></canvas>
+    <script>
+      const canvas = document.querySelector("canvas");
+      const ctx = canvas.getContext("2d");
+
+      const init = () => {
+        canvas.width = window.innerWidth * devicePixelRatio;
+        canvas.height = window.innerHeight * devicePixelRatio;
+      };
+      init();
+      class Circle {
+        constructor(x, y, r) {
+          this.x = x;
+          this.y = y;
+          this.r = r;
+          this.color = this.getRandomColor();
+          this.dx = Math.random() * 12 - 7;
+          this.dy = Math.random() * 12 - 7;
+        }
+
+        render() {
+          ctx.fillStyle = `rgba(0,0,0,0.1)`;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+          ctx.fillStyle = this.color;
+          ctx.fill();
+        }
+        update() {
+          this.x += this.dx;
+          this.y += this.dy;
+          this.r--;
+          if (this.r < 0) {
+            return false;
+          } else {
+            return true;
+          }
+        }
+        getRandomColor() {
+          return (
+            "rgb(" +
+            (parseInt(Math.random() * 240) + 9) +
+            "," +
+            (parseInt(Math.random() * 220) + 18) +
+            ",203)"
+          );
+        }
+      }
+      let circleArr = [];
+      canvas.onmousemove = function (event) {
+        const circle = new Circle(event.clientX, event.clientY, 30);
+        circleArr.push(circle);
+      };
+
+      const draw = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < circleArr.length; i++) {
+          if (!circleArr[i].update()) {
+            circleArr.splice(i, 1);
+          } else {
+            circleArr[i].render();
+          }
+        }
+      };
+      setInterval(draw, 20);
+    </script>
+  </body>
+</html>
